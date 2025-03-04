@@ -1,10 +1,11 @@
 import logging
 import os
+import pickle
+
 import numpy as np
+import optuna
 import pandas as pd
 from catboost import CatBoostClassifier, Pool
-import optuna
-import pickle
 from clearml import Task
 
 logging.basicConfig(
@@ -19,7 +20,7 @@ logger = logging.getLogger(__name__)
 
 
 class VlClassifier:
-    def __init__(self, model_path: str = 'models/model.pkl'):
+    def __init__(self, model_path: str = 'data/models/model.pkl'):
         self.model_path = model_path
         self.model = None
         self.categorical_features = ['HomePlanet', 'CryoSleep', 'Destination', 'VIP', 'Deck', 'Side']
@@ -27,10 +28,20 @@ class VlClassifier:
         self.task = None
 
     def init_clearml_task(self, task_name: str):
-        self.task = Task.init(project_name="Spaceship Titanic",
-                              task_name=task_name,
-                              output_uri=True)
-
+        """Инициализация задачи ClearML с принудительным закрытием предыдущей"""
+        if self.task is not None:
+            logger.info(f"Closing existing task: {self.task.task_id}")
+            self.task.close()  # Закрываем текущую задачу, если она существует
+            self.task = None  # Сбрасываем ссылку
+        try:
+            self.task = Task.init(
+                project_name="Spaceship Titanic",
+                task_name=task_name,
+                output_uri=True
+            )
+        except Exception as e:
+            logger.error(f"Failed to initialize ClearML task: {str(e)}")
+            self.task = None  # Есл
     def preprocess_data(self, data: pd.DataFrame) -> pd.DataFrame:
         try:
             df = data.copy()
@@ -57,7 +68,7 @@ class VlClassifier:
     def _objective(self, trial: optuna.Trial, X: pd.DataFrame, y: np.ndarray) -> float:
         params = {
             'iterations': trial.suggest_int('iterations', 100, 500),
-            'depth': trial.suggest_int('depth', 4, 10),  # Глубокие деревья
+            'depth': trial.suggest_int('depth', 4, 10),
             'learning_rate': trial.suggest_float('learning_rate', 0.01, 0.3),
             'l2_leaf_reg': trial.suggest_float('l2_leaf_reg', 1, 10),
             'verbose': False,
@@ -173,7 +184,6 @@ class VlClassifier:
                 )
                 logger.info("Final test dataset uploaded in ClearML as 'final_test_dataset'")
 
-            # Убираем cat_features из predict
             predictions = self.model.predict(features)
             logger.info("Predictions completed")
 

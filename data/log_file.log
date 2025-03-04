@@ -34,3 +34,13 @@
 2025-03-05 00:40:52,742 - INFO - Predictions completed
 2025-03-05 00:40:52,745 - INFO - Predictions saved in data/results.csv
 2025-03-05 00:40:55,947 - INFO - Prediction results uploaded in ClearML successfully
+2025-03-05 03:57:39,877 - INFO - ClearML task initialized
+2025-03-05 03:57:39,879 - ERROR - Model from models/model.pkl not found!
+2025-03-05 03:57:39,880 - ERROR - Error during prediction Model from models/model.pkl not found!
+2025-03-05 03:58:52,616 - INFO - ClearML task initialized
+2025-03-05 03:58:52,619 - INFO - Model successfully uploaded from data/models/model.pkl
+2025-03-05 03:58:52,630 - INFO - Uploaded test dataset with size: (4277, 13)
+2025-03-05 03:58:56,475 - INFO - Final test dataset uploaded in ClearML as 'final_test_dataset'
+2025-03-05 03:58:56,488 - INFO - Predictions completed
+2025-03-05 03:58:56,493 - INFO - Predictions saved in data/results.csv
+2025-03-05 03:59:00,451 - INFO - Prediction results uploaded in ClearML successfully
