@@ -13,3 +13,24 @@
 2025-03-04 21:31:21,677 - INFO - Preductions completed
 2025-03-04 21:31:21,683 - INFO - Predictions saved in data/results.csv
 2025-03-04 21:31:29,436 - INFO - Prediction results uploaded in ClearML successfully
+2025-03-04 23:11:31,359 - WARNING - Retrying (Retry(total=239, connect=240, read=239, redirect=240, status=240)) after connection broken by 'ReadTimeoutError("HTTPSConnectionPool(host='api.clear.ml', port=443): Read timed out. (read timeout=3.0)")': /auth.login
+2025-03-04 23:12:01,895 - INFO - Uploaded train dataset with size: (8693, 14)
+2025-03-04 23:12:05,506 - INFO - Final preprocessed training dataset uploaded successfully
+2025-03-04 23:12:05,506 - INFO - Parameters optimization started
+2025-03-04 23:19:26,499 - INFO - Best params: {'iterations': 295, 'depth': 5, 'learning_rate': 0.05395838262039709, 'l2_leaf_reg': 1.1356294492631531}
+2025-03-04 23:19:50,433 - INFO - Model saved in models/model.pkl
+2025-03-04 23:19:52,260 - INFO - Best model uploaded in ClearML successfully
+2025-03-04 23:19:52,276 - INFO - Accuracy on training data: 0.8360
+2025-03-04 23:19:52,277 - INFO - Closing ClearML session
+2025-03-05 00:38:32,005 - INFO - ClearML task initialized
+2025-03-05 00:38:32,020 - INFO - Model successfully uploaded from models/model.pkl
+2025-03-05 00:38:32,049 - INFO - Uploaded test dataset with size: (4277, 13)
+2025-03-05 00:38:35,346 - INFO - Final test dataset uploaded in ClearML as 'final_test_dataset'
+2025-03-05 00:38:35,347 - ERROR - Error during prediction CatBoostClassifier.predict() got an unexpected keyword argument 'cat_features'
+2025-03-05 00:40:49,396 - INFO - ClearML task initialized
+2025-03-05 00:40:49,399 - INFO - Model successfully uploaded from models/model.pkl
+2025-03-05 00:40:49,409 - INFO - Uploaded test dataset with size: (4277, 13)
+2025-03-05 00:40:52,731 - INFO - Final test dataset uploaded in ClearML as 'final_test_dataset'
+2025-03-05 00:40:52,742 - INFO - Predictions completed
+2025-03-05 00:40:52,745 - INFO - Predictions saved in data/results.csv
+2025-03-05 00:40:55,947 - INFO - Prediction results uploaded in ClearML successfully

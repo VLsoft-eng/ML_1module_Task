@@ -22,7 +22,7 @@ class VlClassifier:
     def __init__(self, model_path: str = 'models/model.pkl'):
         self.model_path = model_path
         self.model = None
-        self.categorical_features = ['HomePlanet', 'CryoSleep', 'Destination', 'VIP']
+        self.categorical_features = ['HomePlanet', 'CryoSleep', 'Destination', 'VIP', 'Deck', 'Side']
         self.numeric_features = ['Age', 'RoomService', 'FoodCourt', 'ShoppingMall', 'Spa', 'VRDeck']
         self.task = None
 
@@ -34,34 +34,45 @@ class VlClassifier:
     def preprocess_data(self, data: pd.DataFrame) -> pd.DataFrame:
         try:
             df = data.copy()
-            for num_feat in self.numeric_features:
-                df[num_feat] = df[num_feat].fillna(0)
-            for cat_feat in self.categorical_features:
-                df[cat_feat] = df[cat_feat].fillna('Unknown').astype('category').cat.codes
 
-            features = df.drop(columns=['PassengerId', 'Cabin', 'Name'], errors='ignore')
+            df[['Deck', 'Cabin_num', 'Side']] = df['Cabin'].str.split('/', expand=True)
+            df['Cabin_num'] = pd.to_numeric(df['Cabin_num'], errors='coerce')
+
+            df['Group'] = df['PassengerId'].str.split('_').str[0]
+            df['GroupSize'] = df.groupby('Group')['Group'].transform('count')
+
+            for num_feat in self.numeric_features:
+                df[num_feat] = df[num_feat].fillna(df[num_feat].median())
+            for cat_feat in self.categorical_features:
+                df[cat_feat] = df[cat_feat].fillna('Unknown')
+
+            df['TotalSpend'] = df[['RoomService', 'FoodCourt', 'ShoppingMall', 'Spa', 'VRDeck']].sum(axis=1)
+
+            features = df.drop(columns=['PassengerId', 'Cabin', 'Name', 'Group'], errors='ignore')
             return features
         except Exception as e:
-            logger.error(f"Error during preprocessin data: {str(e)}")
+            logger.error(f"Error during preprocessing data: {str(e)}")
             raise
 
     def _objective(self, trial: optuna.Trial, X: pd.DataFrame, y: np.ndarray) -> float:
         params = {
-            'iterations': trial.suggest_int('iterations', 10, 30),
-            'depth': trial.suggest_int('depth', 1, 3),
-            'learning_rate': trial.suggest_float('learning_rate', 0.001, 0.01),
-            'l2_leaf_reg': trial.suggest_float('l2_leaf_reg', 10, 20),
+            'iterations': trial.suggest_int('iterations', 100, 500),
+            'depth': trial.suggest_int('depth', 4, 10),  # Глубокие деревья
+            'learning_rate': trial.suggest_float('learning_rate', 0.01, 0.3),
+            'l2_leaf_reg': trial.suggest_float('l2_leaf_reg', 1, 10),
             'verbose': False,
             'random_seed': 42
         }
         model = CatBoostClassifier(**params)
 
+        cat_features = [col for col in X.columns if X[col].dtype == 'object']
+
         split_idx = int(0.8 * len(y))
         X_train, X_val = X.iloc[:split_idx], X.iloc[split_idx:]
         y_train, y_val = y[:split_idx], y[split_idx:]
 
-        train_pool = Pool(X_train, y_train)
-        val_pool = Pool(X_val, y_val)
+        train_pool = Pool(X_train, y_train, cat_features=cat_features)
+        val_pool = Pool(X_val, y_val, cat_features=cat_features)
         model.fit(train_pool)
         accuracy = model.score(val_pool)
 
@@ -89,7 +100,7 @@ class VlClassifier:
                     artifact_object=final_train_df,
                     metadata={"description": "Final preprocessed training dataset"}
                 )
-                logger.info("Final preprocessed training dataset uploaded successfully'")
+                logger.info("Final preprocessed training dataset uploaded successfully")
 
             logger.info("Parameters optimization started")
             study = optuna.create_study(direction='maximize')
@@ -101,7 +112,8 @@ class VlClassifier:
                 self.task.connect_configuration(best_params)
 
             self.model = CatBoostClassifier(**best_params, random_seed=42)
-            self.model.fit(X, y)
+            cat_features = [col for col in X.columns if X[col].dtype == 'object']
+            self.model.fit(X, y, cat_features=cat_features)
 
             os.makedirs(os.path.dirname(self.model_path), exist_ok=True)
             with open(self.model_path, 'wb') as f:
@@ -159,10 +171,11 @@ class VlClassifier:
                     artifact_object=features,
                     metadata={"description": "Final preprocessed test dataset"}
                 )
-                logger.info("Final test dataset uoloaded in ClearML as 'final_test_dataset'")
+                logger.info("Final test dataset uploaded in ClearML as 'final_test_dataset'")
 
+            # Убираем cat_features из predict
             predictions = self.model.predict(features)
-            logger.info("Preductions completed")
+            logger.info("Predictions completed")
 
             results = pd.DataFrame({
                 'PassengerId': passenger_ids,
