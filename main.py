@@ -1,5 +1,7 @@
 import argparse
 
+from src.model import VlClassifier
+
 
 def parse_args():
     parser = argparse.ArgumentParser(description='Spaceship Titanic Classifier')
@@ -11,4 +13,9 @@ def parse_args():
 
 if __name__ == "__main__":
     args = parse_args()
-    ## model = SpaceshipModel() model in future
+    model = VlClassifier()
+
+    if args.command == 'train':
+        model.train(args.dataset, args.n_trials)
+    elif args.command == 'predict':
+        model.predict(args.dataset)
