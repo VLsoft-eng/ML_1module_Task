@@ -44,3 +44,10 @@
 2025-03-05 03:58:56,488 - INFO - Predictions completed
 2025-03-05 03:58:56,493 - INFO - Predictions saved in data/results.csv
 2025-03-05 03:59:00,451 - INFO - Prediction results uploaded in ClearML successfully
+2025-03-10 20:34:33,572 - INFO - ClearML task initialized
+2025-03-10 20:34:33,576 - INFO - Model successfully uploaded from data/models/model.pkl
+2025-03-10 20:34:33,585 - INFO - Uploaded test dataset with size: (4277, 13)
+2025-03-10 20:34:38,447 - INFO - Final test dataset uploaded in ClearML as 'final_test_dataset'
+2025-03-10 20:34:38,461 - INFO - Predictions completed
+2025-03-10 20:34:38,466 - INFO - Predictions saved in data/results.csv
+2025-03-10 20:34:40,191 - INFO - Prediction results uploaded in ClearML successfully

@@ -67,3 +67,19 @@
 2025-03-05 04:14:41,703 - ERROR - Error during prediction Current task already created and requested task name 'Spaceship_Prediction' does not match current task name 'Spaceship_Training'. If you wish to create additional tasks use `Task.create`, or close the current task with `task.close()` before calling `Task.init(...)`
 2025-03-05 04:14:42,363 - ERROR - Error during prediction Current task already created and requested task name 'Spaceship_Prediction' does not match current task name 'Spaceship_Training'. If you wish to create additional tasks use `Task.create`, or close the current task with `task.close()` before calling `Task.init(...)`
 2025-03-05 04:14:42,894 - ERROR - Error during prediction Current task already created and requested task name 'Spaceship_Prediction' does not match current task name 'Spaceship_Training'. If you wish to create additional tasks use `Task.create`, or close the current task with `task.close()` before calling `Task.init(...)`
+2025-03-05 04:20:14,691 - INFO - Uploaded train dataset with size: (8693, 14)
+2025-03-05 04:20:16,969 - INFO - Final preprocessed training dataset uploaded successfully
+2025-03-05 04:20:16,970 - INFO - Parameters optimization started
+2025-03-05 04:20:22,718 - ERROR - Error during prediction Current task already created and requested task name 'Spaceship_Prediction' does not match current task name 'Spaceship_Training'. If you wish to create additional tasks use `Task.create`, or close the current task with `task.close()` before calling `Task.init(...)`
+2025-03-05 04:26:14,290 - INFO - Using categorical units to plot a list of strings that are all parsable as floats or dates. If these strings should be plotted as numbers, cast to the appropriate data type before plotting.
+2025-03-05 04:26:14,300 - INFO - Using categorical units to plot a list of strings that are all parsable as floats or dates. If these strings should be plotted as numbers, cast to the appropriate data type before plotting.
+2025-03-05 04:27:17,332 - INFO - Using categorical units to plot a list of strings that are all parsable as floats or dates. If these strings should be plotted as numbers, cast to the appropriate data type before plotting.
+2025-03-05 04:27:17,342 - INFO - Using categorical units to plot a list of strings that are all parsable as floats or dates. If these strings should be plotted as numbers, cast to the appropriate data type before plotting.
+2025-03-10 07:31:35,507 - INFO - Uploaded train dataset with size: (8693, 14)
+2025-03-10 07:31:38,539 - INFO - Final preprocessed training dataset uploaded successfully
+2025-03-10 07:31:38,540 - INFO - Parameters optimization started
+2025-03-10 07:37:36,890 - INFO - Best params: {'iterations': 272, 'depth': 4, 'learning_rate': 0.08572731060923496, 'l2_leaf_reg': 8.073931943472134}
+2025-03-10 07:37:49,526 - INFO - Model saved in ../models/model.pkl
+2025-03-10 07:37:50,564 - INFO - Best model uploaded in ClearML successfully
+2025-03-10 07:37:50,586 - INFO - Accuracy on training data: 0.8304
+2025-03-10 07:37:50,586 - INFO - Closing ClearML session
