@@ -5,6 +5,7 @@ fullname and group: Лунев Владислав Витальевич 972301
 ## About:
 Machine learning project. It was necessary to solve the Spaceship Titanic problem. 
 Use optuna and Poetry to find optimal parameters for freezing dependencies. Used CatBoostClassifier. Also used ClearML for MLOps (saving parameters and artifacts)
+Best solution: 0.80640 accuracy
 ## How to: 
 - clone repository
 - input in cl: poerty install 
