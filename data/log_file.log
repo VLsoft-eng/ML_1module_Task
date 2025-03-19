@@ -51,3 +51,11 @@
 2025-03-10 20:34:38,461 - INFO - Predictions completed
 2025-03-10 20:34:38,466 - INFO - Predictions saved in data/results.csv
 2025-03-10 20:34:40,191 - INFO - Prediction results uploaded in ClearML successfully
+2025-03-20 02:29:43,016 - INFO - Uploaded train dataset with size: (8693, 14)
+2025-03-20 02:29:47,197 - INFO - Final preprocessed training dataset uploaded successfully
+2025-03-20 02:29:47,198 - INFO - Parameters optimization started
+2025-03-20 02:36:16,179 - INFO - Best params: {'iterations': 133, 'depth': 6, 'learning_rate': 0.29654618922089193, 'l2_leaf_reg': 4.901359171477958}
+2025-03-20 02:36:28,794 - INFO - Model saved in data/models/model.pkl
+2025-03-20 02:36:30,324 - INFO - Best model uploaded in ClearML successfully
+2025-03-20 02:36:30,340 - INFO - Accuracy on training data: 0.8310
+2025-03-20 02:36:30,341 - INFO - Closing ClearML session

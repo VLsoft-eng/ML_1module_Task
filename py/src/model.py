@@ -41,7 +41,7 @@ class VlClassifier:
             )
         except Exception as e:
             logger.error(f"Failed to initialize ClearML task: {str(e)}")
-            self.task = None  # Есл
+            self.task = None
     def preprocess_data(self, data: pd.DataFrame) -> pd.DataFrame:
         try:
             df = data.copy()
@@ -74,6 +74,23 @@ class VlClassifier:
             'verbose': False,
             'random_seed': 42
         }
+        
+        # Улучшенное логирование параметров
+        if self.task:
+            # Логируем параметры в отдельные графики
+            for param_name, param_value in params.items():
+                self.task.get_logger().report_scalar(
+                    "hyperparameters", 
+                    param_name, 
+                    value=param_value,
+                    iteration=trial.number
+                )
+            
+            # Логируем все параметры как единый словарь
+            self.task.connect({
+                f'trial_{trial.number}_params': params
+            })
+
         model = CatBoostClassifier(**params)
 
         cat_features = [col for col in X.columns if X[col].dtype == 'object']
@@ -88,8 +105,13 @@ class VlClassifier:
         accuracy = model.score(val_pool)
 
         if self.task:
-            self.task.get_logger().report_scalar("trial_params", "iterations", value=params['iterations'],
-                                                 iteration=trial.number)
+            self.task.get_logger().report_scalar(
+                "optimization_metrics",
+                "validation_accuracy",
+                value=accuracy,
+                iteration=trial.number
+            )
+
         return accuracy
 
     def train(self, train_path: str, n_trials: int = 20):
@@ -119,8 +141,45 @@ class VlClassifier:
 
             best_params = study.best_params
             logger.info(f"Best params: {best_params}")
+            
+            # Улучшенное сохранение лучших параметров
             if self.task:
-                self.task.connect_configuration(best_params)
+                # Сохраняем как конфигурацию
+                self.task.connect_configuration({
+                    'best_parameters': best_params,
+                    'best_score': study.best_value,
+                    'n_trials': n_trials,
+                    'optimization_direction': study.direction,
+                    'study_statistics': {
+                        'n_finished_trials': len(study.trials),
+                        'n_complete_trials': len([t for t in study.trials if t.state == optuna.trial.TrialState.COMPLETE]),
+                        'n_error_trials': len([t for t in study.trials if t.state == optuna.trial.TrialState.FAIL])
+                    }
+                })
+                
+                # Сохраняем как артефакт для удобного доступа
+                self.task.upload_artifact(
+                    "optimization_results",
+                    artifact_object={
+                        'best_parameters': best_params,
+                        'best_score': study.best_value,
+                        'all_trials': [
+                            {
+                                'number': t.number,
+                                'params': t.params,
+                                'value': t.value,
+                                'state': str(t.state)
+                            }
+                            for t in study.trials
+                        ]
+                    }
+                )
+                
+                # Логируем лучшие параметры как отдельные значения
+                for param_name, param_value in best_params.items():
+                    self.task.get_logger().report_single_value(
+                        f"best_{param_name}", param_value
+                    )
 
             self.model = CatBoostClassifier(**best_params, random_seed=42)
             cat_features = [col for col in X.columns if X[col].dtype == 'object']
